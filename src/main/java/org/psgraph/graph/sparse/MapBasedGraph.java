@@ -13,10 +13,7 @@ package org.psgraph.graph.sparse;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.EdgeType;
 import org.psgraph.graph.Node;
@@ -27,12 +24,10 @@ import org.psgraph.graph.Node;
 public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
     org.psgraph.graph.Graph<N, E> {
 
-  private final Map<N, Set<N>> nodes;
-  private final Map<N, Set<E>> edgesByNode;
+  private final Map<N, Map<N, E>> graph;
 
   public MapBasedGraph() {
-    this.nodes = new HashMap<>();
-    this.edgesByNode = new HashMap<>();
+    this.graph = new HashMap<>();
   }
 
   public MapBasedGraph(Collection<E> edges) {
@@ -46,13 +41,13 @@ public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
   @Override
   public void addEdge(E edge) {
     if (edge.getEdgeType() == EdgeType.Directed) {
-      nodes.putIfAbsent(edge.getSource(), new HashSet<>());
-      nodes.get(edge.getSource()).add(edge.getTarget());
+      graph.putIfAbsent(edge.getSource(), new HashMap<>());
+      graph.get(edge.getSource()).put(edge.getTarget(), edge);
     } else {
-      nodes.putIfAbsent(edge.getSource(), new HashSet<>());
-      nodes.putIfAbsent(edge.getTarget(), new HashSet<>());
-      nodes.get(edge.getSource()).add(edge.getTarget());
-      nodes.get(edge.getTarget()).add(edge.getSource());
+      graph.putIfAbsent(edge.getSource(), new HashMap<>());
+      graph.putIfAbsent(edge.getTarget(), new HashMap<>());
+      graph.get(edge.getSource()).put(edge.getTarget(), edge);
+      graph.get(edge.getTarget()).put(edge.getSource(), edge);
     }
   }
 
@@ -74,11 +69,17 @@ public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
    */
   @Override
   public void removeEdge(N from, N to) {
-    Set<N> nodes = this.nodes.get(from);
-    if (nodes != null) {
-      nodes.remove(to);
-      if (nodes.isEmpty()) {
-        this.nodes.remove(from);
+    Map<N, E> map = graph.get(from);
+    if (map != null) {
+      if (map.containsKey(to)) {
+        E edge = map.get(to);
+        map.remove(from);
+        if (map.isEmpty()) {
+          graph.remove(from);
+        }
+        if (edge.getEdgeType() == EdgeType.Undirected) {
+          removeEdge(to, from);
+        }
       }
     }
   }
@@ -87,37 +88,7 @@ public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
    * @inheritDoc
    */
   @Override
-  public Set<E> getEdges(Node n) {
-    return edgesByNode.get(n);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  @Override
-  public Set<E> getSourceEdges(N n) {
-    Set<E> edges = edgesByNode.get(n);
-    if (edges != null) {
-      return edges.stream().filter(e -> e.getEdgeType() == EdgeType.Directed)
-          .filter(e -> e.getTarget().equals(n)).collect(
-              Collectors.toSet());
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * @inheritDoc
-   */
-  @Override
-  public Set<E> getTargetEdges(N n) {
-    Set<E> edges = edgesByNode.get(n);
-    if (edges != null) {
-      return edges.stream().filter(e -> e.getEdgeType() == EdgeType.Directed)
-          .filter(e -> e.getSource().equals(n)).collect(
-              Collectors.toSet());
-    } else {
-      return null;
-    }
+  public Collection<E> getEdges(N node) {
+    return graph.getOrDefault(node, new HashMap<>()).values();
   }
 }

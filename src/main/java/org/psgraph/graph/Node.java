@@ -11,11 +11,9 @@
 
 package org.psgraph.graph;
 
-import java.util.Collection;
-
 /**
  * @author Wilson de Carvalho
  */
-public interface Node<E extends  Edge<?>> {
-  E getSourceEdge();
+public interface Node {
+
 }

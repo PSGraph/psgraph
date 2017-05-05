@@ -11,7 +11,7 @@
 
 package org.psgraph.graph;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * @author Wilson de Carvalho
@@ -37,15 +37,5 @@ public interface Graph<N extends Node, E extends Edge<N>> {
   /**
    * Get all the edges connected to a given node n.
    */
-  Set<E> getEdges(Node n);
-
-  /**
-   * Get all edges that are source of a given node n.
-   */
-  Set<E> getSourceEdges(N n);
-
-  /**
-   * Get all edges that are target of a given node n.
-   */
-  Set<E> getTargetEdges(N n);
+  Collection<E> getEdges(N node);
 }
