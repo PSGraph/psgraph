@@ -14,17 +14,18 @@ package org.psgraph.graph.sparse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.EdgeType;
-import org.psgraph.graph.Node;
+import org.psgraph.graph.Vertex;
 
 /**
  * @author Wilson de Carvalho
  */
-public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
-    org.psgraph.graph.Graph<N, E> {
+public class MapBasedGraph<V extends Vertex, E extends Edge<V>> implements
+    org.psgraph.graph.Graph<V, E> {
 
-  private final Map<N, Map<N, E>> graph;
+  private final Map<V, Map<V, E>> graph;
 
   public MapBasedGraph() {
     this.graph = new HashMap<>();
@@ -68,8 +69,8 @@ public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
    * @inheritDoc
    */
   @Override
-  public void removeEdge(N from, N to) {
-    Map<N, E> map = graph.get(from);
+  public void removeEdge(V from, V to) {
+    Map<V, E> map = graph.get(from);
     if (map != null) {
       if (map.containsKey(to)) {
         E edge = map.get(to);
@@ -88,7 +89,15 @@ public class MapBasedGraph<N extends Node, E extends Edge<N>> implements
    * @inheritDoc
    */
   @Override
-  public Collection<E> getEdges(N node) {
-    return graph.getOrDefault(node, new HashMap<>()).values();
+  public Collection<E> getEdges(V vertex) {
+    return graph.getOrDefault(vertex, new HashMap<>()).values();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  @Override
+  public Set<Set<E>> getStronglyConnectedComponents(V startVertex) {
+    return null;
   }
 }

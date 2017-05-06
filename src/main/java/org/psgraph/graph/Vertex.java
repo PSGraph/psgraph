@@ -14,6 +14,6 @@ package org.psgraph.graph;
 /**
  * @author Wilson de Carvalho
  */
-public interface Node {
+public interface Vertex {
 
 }

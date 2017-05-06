@@ -12,39 +12,39 @@
 package org.psgraph.graph;
 
 /**
- * Like in regular graph theory, an edge is composed of two nodes (1 and 2).
+ * Like in regular graph theory, an edge is composed of two vertexes (1 and 2).
  *
  * @author Wilson de Carvalho
  */
-public interface Edge<N extends Node> {
+public interface Edge<V extends Vertex> {
 
   /**
-   * Get the source node for this edge.
+   * Get the source vertex for this edge.
    */
-  N getSource();
+  V getSource();
 
   /**
-   * Set the source node for this edge.
+   * Set the source vertex for this edge.
    */
-  void setSource(N n);
+  void setSource(V v);
 
   /**
-   * Get the target node for this edge.
+   * Get the target vertex for this edge.
    */
-  N getTarget();
+  V getTarget();
 
   /**
-   * Set the target node for this edge.
+   * Set the target vertex for this edge.
    */
-  void setTarget(N n);
+  void setTarget(V v);
 
   /**
-   * Given a reference node, return the other node of this edge.
+   * Given a reference vertex, return the other vertex of this edge.
    *
-   * @param n Reference node.
-   * @return The other node connected to this edge.
+   * @param v Reference vertex.
+   * @return The other vertex connected to this edge.
    */
-  N getOtherNode(N n);
+  V getOtherVertex(V v);
 
   /**
    * Get the edge type.

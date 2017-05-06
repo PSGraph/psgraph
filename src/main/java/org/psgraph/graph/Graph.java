@@ -12,11 +12,14 @@
 package org.psgraph.graph;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
+ * Fundamental definitions for graph implementations.
+ *
  * @author Wilson de Carvalho
  */
-public interface Graph<N extends Node, E extends Edge<N>> {
+public interface Graph<N extends Vertex, E extends Edge<N>> {
 
   /**
    * Adds a given edge to this nodes. If the edge is an instance of DiEdge it will be created as a
@@ -38,4 +41,13 @@ public interface Graph<N extends Node, E extends Edge<N>> {
    * Get all the edges connected to a given node n.
    */
   Collection<E> getEdges(N node);
+
+  /**
+   * Gets a set of strongly connected components (scc) with a search performed from the start node
+   * provided.
+   *
+   * @param startNode The start node for the search.
+   * @return A set in which each internal set corresponds to a scc.
+   */
+  Set<Set<E>> getStronglyConnectedComponents(N startNode);
 }
