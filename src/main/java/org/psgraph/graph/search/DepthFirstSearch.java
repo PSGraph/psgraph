@@ -22,7 +22,7 @@ import org.psgraph.graph.Vertex;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * Depth First Search (DFS) algorithm.
+ * Depth First Search (DFS) algorithm. <b>Cost: Theta(V+E)</b>
  *
  * @author Wilson de Carvalho
  */
@@ -34,11 +34,17 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
     this.graph = graph;
   }
 
+  /**
+   * @inheritDoc
+   */
   @Override
   public Collection<SearchData<V>> search() {
     return search((VertexVisitor<V>) v -> true);
   }
 
+  /**
+   * @inheritDoc
+   */
   @Override
   public Collection<SearchData<V>> search(VertexVisitor<V> visitor) {
     Map<V, SearchData<V>> searchData = initSearchData();
@@ -50,6 +56,9 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
     return searchData.values();
   }
 
+  /**
+   * @inheritDoc
+   */
   @Override
   public Collection<E> search(EdgeVisitor<V, E> visitor) {
     Set<E> ret = new HashSet<>();

@@ -22,7 +22,7 @@ import org.psgraph.graph.Graph;
 import org.psgraph.graph.Vertex;
 
 /**
- * Breadth First Search (BFS) algorithm.
+ * Breadth First Search (BFS) algorithm. <b>Cost: Theta(V+E)</b>
  *
  * @author Wilson de Carvalho
  */
