@@ -20,13 +20,6 @@ import org.psgraph.graph.Vertex;
  * @author Wilson de Carvalho
  */
 @FunctionalInterface
-public interface EdgeVisitor<V extends Vertex, E extends Edge<V>> {
+public interface EdgeVisitor<V extends Vertex, E extends Edge<V>> extends Visitor<E> {
 
-  /**
-   * Visits an edge.
-   *
-   * @param edge The edge being visited.
-   * @return False if the topological search must stop in the current element. True otherwise.
-   */
-  boolean visit(E edge);
 }

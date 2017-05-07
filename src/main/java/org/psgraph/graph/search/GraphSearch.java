@@ -11,7 +11,7 @@
 
 package org.psgraph.graph.search;
 
-import java.util.Set;
+import java.util.Collection;
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.Vertex;
 
@@ -23,37 +23,57 @@ import org.psgraph.graph.Vertex;
 public interface GraphSearch<V extends Vertex, E extends Edge<V>> {
 
   /**
-   * Perform the graph search starting in the informed vertex.
+   * Perform the graph search in all of the graph's vertices.
    *
-   * @param startVertex Start vertex for the search.
-   * @return The set of vertexes visited.
+   * @return A collection with the search data containing all the graph's vertices.
    */
-  Set<V> execute(V startVertex);
+  Collection<SearchData<V>> search();
+
+  /**
+   * Perform the graph search in all of the graph's vertices.
+   *
+   * @param visitor The vertex visitor used to control the search. In case the visitor returns false
+   * for a given vertex, the topological search will stop at that point.
+   * @return A collection with the edges visited during the search.
+   */
+  Collection<SearchData<V>> search(VertexVisitor<V> visitor);
+
+  /**
+   * Perform the graph search in all of the graph's vertices.
+   *
+   * @param visitor The edge visitor used to control the search. In case the visitor returns false
+   * for a given edge, the topological search will stop at that point.
+   * @return A collection with the search data containing all the graph's vertices.
+   */
+  Collection<E> search(EdgeVisitor<V, E> visitor);
 
   /**
    * Perform the graph search starting in the informed vertex.
    *
-   * @param startVertex Start vertex for the search.
-   * @param visitor The vertex visitor used to control the search.
-   * @return The set of vertexes visited.
+   * @param s Start vertex for the search.
+   * @return A collection with the search data containing all the graph's vertices (including those
+   * not reached by this search).
    */
-  Set<V> execute(V startVertex, VertexVisitor<V> visitor);
+  Collection<SearchData<V>> search(V s);
 
   /**
    * Perform the graph search starting in the informed vertex.
    *
-   * @param startVertex Start vertex for the search.
-   * @param visitor The edge visitor used to control the search.
-   * @return The set of vertexes visited.
+   * @param s Start vertex for the search.
+   * @param visitor The vertex visitor used to control the search. In case the visitor returns false
+   * for a given vertex, the topological search will stop at that point.
+   * @return A collection with the search data containing all the graph's vertices (including those
+   * not reached by this search).
    */
-  Set<V> execute(V startVertex, EdgeVisitor<V, E> visitor);
+  Collection<SearchData<V>> search(V s, VertexVisitor<V> visitor);
 
   /**
    * Perform the graph search starting in the informed vertex.
    *
-   * @param startVertex Start vertex for the search.
-   * @param visitor The vertex-edge visitor used to control the search.
-   * @return The set of vertexes visited.
+   * @param s Start vertex for the search.
+   * @param visitor The edge visitor used to control the search. In case the visitor returns false
+   * for a given edge, the topological search will stop at that point.
+   * @return A collection with the edges visited during the search.
    */
-  Set<V> execute(V startVertex, VertexEdgeVisitor<V, E> visitor);
+  Collection<E> search(V s, EdgeVisitor<V, E> visitor);
 }

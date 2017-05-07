@@ -9,26 +9,33 @@
  * </pre>
  */
 
-package org.psgraph.graph.sparse;
+package org.psgraph.graph.immutable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.EdgeType;
+import org.psgraph.graph.Graph;
 import org.psgraph.graph.Vertex;
 
 /**
  * @author Wilson de Carvalho
  */
 public class MapBasedGraph<V extends Vertex, E extends Edge<V>> implements
-    org.psgraph.graph.Graph<V, E> {
+    Graph<V, E> {
 
-  private final Map<V, Map<V, E>> graph;
+  protected final Map<V, Map<V, E>> graph;
+  protected final Set<V> vertices;
+  protected final Set<E> edges;
 
   public MapBasedGraph() {
     this.graph = new HashMap<>();
+    this.vertices = new HashSet<>();
+    this.edges = new HashSet<>();
   }
 
   public MapBasedGraph(Collection<E> edges) {
@@ -36,11 +43,16 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> implements
     edges.forEach(e -> addEdge(e));
   }
 
-  /**
-   * @inheritDoc
-   */
   @Override
-  public void addEdge(E edge) {
+  public E getEdge(V from, V to) {
+    return graph.getOrDefault(from, new HashMap<>()).get(to);
+  }
+
+  /**
+   * Adds a given edge to this graph. If the edge is an instance of DiEdge it will be created as a
+   * source->target edge, otherwise it will be considered an undirected edge.
+   */
+  protected void addEdge(E edge) {
     if (edge.getEdgeType() == EdgeType.Directed) {
       graph.putIfAbsent(edge.getSource(), new HashMap<>());
       graph.get(edge.getSource()).put(edge.getTarget(), edge);
@@ -50,54 +62,38 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> implements
       graph.get(edge.getSource()).put(edge.getTarget(), edge);
       graph.get(edge.getTarget()).put(edge.getSource(), edge);
     }
+    edges.add(edge);
   }
 
   /**
    * @inheritDoc
    */
   @Override
-  public void removeEdge(E edge) {
-    if (edge.getEdgeType() == EdgeType.Directed) {
-      this.removeEdge(edge.getSource(), edge.getTarget());
-    } else {
-      this.removeEdge(edge.getSource(), edge.getTarget());
-      this.removeEdge(edge.getTarget(), edge.getSource());
-    }
+  public Collection<E> getEdges(V v) {
+    return graph.getOrDefault(v, new HashMap<>()).values();
   }
 
   /**
    * @inheritDoc
    */
   @Override
-  public void removeEdge(V from, V to) {
-    Map<V, E> map = graph.get(from);
-    if (map != null) {
-      if (map.containsKey(to)) {
-        E edge = map.get(to);
-        map.remove(from);
-        if (map.isEmpty()) {
-          graph.remove(from);
-        }
-        if (edge.getEdgeType() == EdgeType.Undirected) {
-          removeEdge(to, from);
-        }
-      }
-    }
+  public Set<V> getVertices() {
+    return Collections.unmodifiableSet(this.vertices);
   }
 
   /**
    * @inheritDoc
    */
   @Override
-  public Collection<E> getEdges(V vertex) {
-    return graph.getOrDefault(vertex, new HashMap<>()).values();
+  public Set<E> getEdges() {
+    return Collections.unmodifiableSet(this.edges);
   }
 
   /**
    * @inheritDoc
    */
   @Override
-  public Set<Set<E>> getStronglyConnectedComponents(V startVertex) {
-    return null;
+  public Set<V> getAdjacentVertices(V v) {
+    return graph.getOrDefault(v, new HashMap<>()).keySet();
   }
 }

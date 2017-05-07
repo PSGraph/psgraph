@@ -11,14 +11,11 @@
 
 package org.psgraph.graph.search;
 
-import org.psgraph.graph.Vertex;
-
 /**
- * Interface created to allow code injection in search algorithms through lambda expressions.
+ * Vertex color definition to be used in graph search algorithms.
  *
  * @author Wilson de Carvalho
  */
-@FunctionalInterface
-public interface VertexVisitor<V extends Vertex> extends Visitor<V> {
-
+public enum VertexColor {
+  Black, Gray, White;
 }

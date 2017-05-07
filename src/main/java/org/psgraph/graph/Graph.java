@@ -19,35 +19,30 @@ import java.util.Set;
  *
  * @author Wilson de Carvalho
  */
-public interface Graph<N extends Vertex, E extends Edge<N>> {
+public interface Graph<V extends Vertex, E extends Edge<V>> {
 
   /**
-   * Adds a given edge to this nodes. If the edge is an instance of DiEdge it will be created as a
-   * source->target edge, otherwise it will be considered an undirected edge.
+   * Gets the edge that is connected to the informed vertices.
    */
-  void addEdge(E edge);
+  E getEdge(V from, V to);
 
   /**
-   * Removes a given edge.
+   * Gets all the edges connected to a given vertex v.
    */
-  void removeEdge(E edge);
+  Collection<E> getEdges(V v);
 
   /**
-   * Removes the edge that is connected to the informed nodes.
+   * Gets all the vertices in this graph.
    */
-  void removeEdge(N from, N to);
+  Set<V> getVertices();
 
   /**
-   * Get all the edges connected to a given node n.
+   * Gets all the edges in this graph.
    */
-  Collection<E> getEdges(N node);
+  Set<E> getEdges();
 
   /**
-   * Gets a set of strongly connected components (scc) with a search performed from the start node
-   * provided.
-   *
-   * @param startNode The start node for the search.
-   * @return A set in which each internal set corresponds to a scc.
+   * Gets the adjacent vertices of a give vertex.
    */
-  Set<Set<E>> getStronglyConnectedComponents(N startNode);
+  Collection<V> getAdjacentVertices(V v);
 }

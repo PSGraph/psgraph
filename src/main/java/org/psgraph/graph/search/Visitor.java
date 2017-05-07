@@ -11,23 +11,19 @@
 
 package org.psgraph.graph.search;
 
-import org.psgraph.graph.Edge;
-import org.psgraph.graph.Vertex;
-
 /**
  * Interface created to allow code injection in search algorithms through lambda expressions.
  *
  * @author Wilson de Carvalho
  */
 @FunctionalInterface
-public interface VertexEdgeVisitor<V extends Vertex, E extends Edge<V>> {
+public interface Visitor<T> {
 
   /**
-   * Visits a vertex and its downstream edge.
+   * Visits an element.
    *
-   * @param vertex The vertex being visited.
-   * @param edge The edge being visited.
-   * @return False if the topological search must stop in the current elements. True otherwise.
+   * @param element The element being visited.
+   * @return False if the topological search must stop in the current element. True otherwise.
    */
-  boolean visit(Vertex vertex, E edge);
+  boolean visit(T element);
 }
