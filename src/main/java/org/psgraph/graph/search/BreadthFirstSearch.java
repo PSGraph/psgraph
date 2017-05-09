@@ -38,7 +38,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search() {
+  public Map<V, SearchData<V>> search() {
     return search((VertexVisitor<V>) v -> true);
   }
 
@@ -46,14 +46,14 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(VertexVisitor<V> visitor) {
+  public Map<V, SearchData<V>> search(VertexVisitor<V> visitor) {
     Map<V, SearchData<V>> searchData = initSearchData();
     for (V v : graph.getVertices()) {
       if (searchData.get(v).getColor() == VertexColor.White) {
         bfsVertex(v, u -> true, searchData);
       }
     }
-    return searchData.values();
+    return searchData;
   }
 
   /**
@@ -75,7 +75,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(V s) {
+  public Map<V, SearchData<V>> search(V s) {
     Map<V, SearchData<V>> searchData = initSearchData();
     return bfsVertex(s, v -> true, searchData);
   }
@@ -84,7 +84,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(V s, VertexVisitor<V> visitor) {
+  public Map<V, SearchData<V>> search(V s, VertexVisitor<V> visitor) {
     Map<V, SearchData<V>> searchData = initSearchData();
     return bfsVertex(s, visitor, searchData);
   }
@@ -92,7 +92,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
   /**
    * Executes the dfs algorithm for a given start vertex <b>s</b>. <b>Cost: Theta(V+E)</b>
    */
-  private Collection<SearchData<V>> bfsVertex(V s, Visitor<V> visitor,
+  private Map<V, SearchData<V>> bfsVertex(V s, Visitor<V> visitor,
       Map<V, SearchData<V>> searchData) {
     ArrayDeque<V> queue = new ArrayDeque<>();
     queue.push(s);
@@ -103,6 +103,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
         for (V v : graph.getAdjacentVertices(u)) {
           SearchData<V> vData = searchData.get(v);
           if (vData.getColor() == VertexColor.White) {
+            uData.addSucessors(v);
             vData.setColor(VertexColor.Gray);
             vData.setDepth(uData.getDepth() + 1);
             vData.setPredecessor(u);
@@ -112,7 +113,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
         uData.setColor(VertexColor.Black);
       }
     }
-    return searchData.values();
+    return searchData;
   }
 
   /**
@@ -158,6 +159,7 @@ public class BreadthFirstSearch<V extends Vertex, E extends Edge<V>> implements 
           ret.add(e);
           SearchData<V> vData = searchData.get(v);
           if (vData.getColor() == VertexColor.White) {
+            uData.addSucessors(v);
             vData.setColor(VertexColor.Gray);
             vData.setDepth(uData.getDepth() + 1);
             vData.setPredecessor(u);

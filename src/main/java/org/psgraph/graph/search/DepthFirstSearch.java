@@ -38,7 +38,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search() {
+  public Map<V, SearchData<V>> search() {
     return search((VertexVisitor<V>) v -> true);
   }
 
@@ -46,14 +46,14 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(VertexVisitor<V> visitor) {
+  public Map<V, SearchData<V>> search(VertexVisitor<V> visitor) {
     Map<V, SearchData<V>> searchData = initSearchData();
     for (V v : graph.getVertices()) {
       if (searchData.get(v).getColor() == VertexColor.White) {
         dfsVertex(v, u -> true, searchData);
       }
     }
-    return searchData.values();
+    return searchData;
   }
 
   /**
@@ -75,7 +75,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(V s) {
+  public Map<V, SearchData<V>> search(V s) {
     Map<V, SearchData<V>> searchData = initSearchData();
     return dfsVertex(s, v -> true, searchData);
   }
@@ -84,7 +84,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
    * @inheritDoc
    */
   @Override
-  public Collection<SearchData<V>> search(V s, VertexVisitor<V> visitor) {
+  public Map<V, SearchData<V>> search(V s, VertexVisitor<V> visitor) {
     Map<V, SearchData<V>> searchData = initSearchData();
     return dfsVertex(s, visitor, searchData);
   }
@@ -92,11 +92,11 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   /**
    * Executes the dfs algorithm for a given start vertex <b>s</b>. <b>Cost: Theta(V+E)</b>
    */
-  private Collection<SearchData<V>> dfsVertex(V s, VertexVisitor<V> visitor,
+  private Map<V, SearchData<V>> dfsVertex(V s, VertexVisitor<V> visitor,
       Map<V, SearchData<V>> searchData) {
     int time = 0;
     dfsVertexVisit(s, searchData, time, visitor);
-    return searchData.values();
+    return searchData;
   }
 
   /**
@@ -112,6 +112,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
       for (V v : graph.getAdjacentVertices(u)) {
         SearchData<V> vData = searchData.get(v);
         if (vData.getColor() == VertexColor.White) {
+          uData.addSucessors(v);
           dfsVertexVisit(v, searchData, time, visitor);
         }
       }
@@ -167,6 +168,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
         edgesVisited.add(e);
         SearchData<V> vData = searchData.get(v);
         if (vData.getColor() == VertexColor.White) {
+          uData.addSucessors(v);
           dfsEdgeVisit(v, searchData, time, visitor, edgesVisited);
         }
       }

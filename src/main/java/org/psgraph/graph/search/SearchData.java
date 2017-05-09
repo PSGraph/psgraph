@@ -11,6 +11,8 @@
 
 package org.psgraph.graph.search;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.psgraph.graph.Vertex;
 
 /**
@@ -25,6 +27,7 @@ public class SearchData<V extends Vertex> {
   private int time = 0;
   private int depth = 0;
   private V predecessor = null;
+  private Set<V> sucessors = new HashSet<>();
 
   public SearchData(V vertex) {
     this.vertex = vertex;
@@ -68,5 +71,13 @@ public class SearchData<V extends Vertex> {
 
   public void setPredecessor(V predecessor) {
     this.predecessor = predecessor;
+  }
+
+  public Set<V> getSucessors() {
+    return sucessors;
+  }
+
+  public void addSucessors(V sucessor) {
+    this.sucessors.add(sucessor);
   }
 }
