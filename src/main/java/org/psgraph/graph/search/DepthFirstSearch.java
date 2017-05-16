@@ -19,6 +19,10 @@ import java.util.Set;
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.Graph;
 import org.psgraph.graph.Vertex;
+import org.psgraph.graph.search.visitor.EdgeVisitor;
+import org.psgraph.graph.search.visitor.SearchDataVisitor;
+import org.psgraph.graph.search.visitor.VertexVisitor;
+import org.psgraph.graph.search.visitor.Visitor;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -35,7 +39,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Map<V, SearchData<V>> search() {
@@ -43,7 +47,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Map<V, SearchData<V>> search(VertexVisitor<V> visitor) {
@@ -57,7 +61,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Collection<E> search(EdgeVisitor<V, E> visitor) {
@@ -72,7 +76,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Map<V, SearchData<V>> search(V s) {
@@ -81,7 +85,7 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Map<V, SearchData<V>> search(V s, VertexVisitor<V> visitor) {
@@ -95,26 +99,31 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   private Map<V, SearchData<V>> dfsVertex(V s, VertexVisitor<V> visitor,
       Map<V, SearchData<V>> searchData) {
     int time = 0;
-    dfsVertexVisit(s, searchData, time, visitor);
+    dfsVisit(s, searchData, time, visitor);
     return searchData;
   }
 
   /**
    * Visits a given vertex and triggers the visitation of the adjacent non-visited vertices.
    */
-  private void dfsVertexVisit(V u, Map<V, SearchData<V>> searchData, int time,
-      VertexVisitor<V> visitor) {
+  private <T> void dfsVisit(V u, Map<V, SearchData<V>> searchData, int time,
+      Visitor<T> visitor) {
     time += 1;
-    SearchData<V> uData = searchData.get(u);
+    SearchDataImpl<V> uData = (SearchDataImpl<V>) searchData.get(u);
     uData.setDepth(time);
-    if (visitor.visit(u)) {
-      uData.setColor(VertexColor.Gray);
-      for (V v : graph.getAdjacentVertices(u)) {
-        SearchData<V> vData = searchData.get(v);
-        if (vData.getColor() == VertexColor.White) {
-          uData.addSucessors(v);
-          dfsVertexVisit(v, searchData, time, visitor);
-        }
+    uData.setColor(VertexColor.Gray);
+    for (V v : graph.getAdjacentVertices(u)) {
+      SearchDataImpl<V> vData = (SearchDataImpl<V>) searchData.get(v);
+      if (vData.getColor() == VertexColor.White) {
+        uData.addSucessors(v);
+        vData.setPredecessor(u);
+      }
+    }
+    boolean ok = visitor instanceof VertexVisitor ? ((VertexVisitor<V>) visitor).visit(u)
+        : ((SearchDataVisitor<V>) visitor).visit(uData);
+    if (ok) {
+      for (V v : uData.getSucessors()) {
+        dfsVisit(v, searchData, time, visitor);
       }
     }
     time += 1;
@@ -128,17 +137,27 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   private Map<V, SearchData<V>> initSearchData() {
     Map<V, SearchData<V>> ret = new HashMap<>();
     for (V vertex : graph.getVertices()) {
-      ret.put(vertex, new SearchData<>(vertex));
+      ret.put(vertex, new SearchDataImpl<>(vertex));
     }
     return ret;
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public Set<E> search(V s, EdgeVisitor<V, E> visitor) {
     throw new NotImplementedException();
+  }
+
+  @Override
+  public Map<V, SearchData<V>> search(SearchDataVisitor<V> visitor) {
+    return null;
+  }
+
+  @Override
+  public Map<V, SearchData<V>> search(V s, SearchDataVisitor<V> visitor) {
+    return null;
   }
 
 
@@ -159,12 +178,12 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   private void dfsEdgeVisit(V u, Map<V, SearchData<V>> searchData, int time,
       EdgeVisitor<V, E> visitor, Set<E> edgesVisited) {
     time += 1;
-    SearchData<V> uData = searchData.get(u);
+    SearchDataImpl<V> uData = (SearchDataImpl<V>) searchData.get(u);
     uData.setDepth(time);
     uData.setColor(VertexColor.Gray);
     for (V v : graph.getAdjacentVertices(u)) {
       E e = graph.getEdge(u, v);
-      if (visitor.visit(e)) {
+      if (!edgesVisited.contains(e) && visitor.visit(e)) {
         edgesVisited.add(e);
         SearchData<V> vData = searchData.get(v);
         if (vData.getColor() == VertexColor.White) {

@@ -9,18 +9,17 @@
  * </pre>
  */
 
-package org.psgraph.graph.search;
+package org.psgraph.graph.search.visitor;
 
 /**
- * Interface created to allow code injection in search algorithms through lambda expressions.
+ * Base interface for grouping different visitors.
  *
  * @author Wilson de Carvalho
  */
-@FunctionalInterface
 public interface Visitor<T> {
 
   /**
-   * Visits an element.
+   * Visits a vertex.
    *
    * @param element The element being visited.
    * @return False if the topological search must stop in the current element. True otherwise.

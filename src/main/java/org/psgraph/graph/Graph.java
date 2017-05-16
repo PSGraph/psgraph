@@ -42,7 +42,12 @@ public interface Graph<V extends Vertex, E extends Edge<V>> {
   Set<E> getEdges();
 
   /**
-   * Gets the adjacent vertices of a give vertex.
+   * Gets the adjacent vertices of a given vertex.
    */
   Collection<V> getAdjacentVertices(V v);
+
+  /**
+   * Gets the successor of a given vertex.
+   */
+  Set<V> getSuccessors(V v);
 }

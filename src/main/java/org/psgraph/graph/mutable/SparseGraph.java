@@ -11,32 +11,57 @@
 
 package org.psgraph.graph.mutable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.psgraph.graph.EdgeType;
+import org.psgraph.graph.SparseRepresentation;
 import org.psgraph.graph.Vertex;
 
 /**
+ * A sparse graph, as the name suggests, allows sparse graph representation. It uses a HashMap
+ * (default) or a LinkedHashMap to represent the graph internally. The choice between HashMap or
+ * LinkedHashMap implies in differences in performance for big graphs. A graph backed by a
+ * LinkedHashMap will be faster when iterating through its vertices or edges due to the nature of
+ * this data structure. Conversely, the LinkedHashMap is slower when additions and removals are
+ * performed in vertices and edges. When the underlying data structure is not informed, the graph
+ * will be backed by a HashMap.
+ *
+ * This mutable graph can may have vertices and edges removed or inserted after the class is
+ * instantiated. It is not thread safe.
+ *
  * @author Wilson de Carvalho
  */
-public class MapBasedGraph<V extends Vertex, E extends Edge<V>> extends
-    org.psgraph.graph.immutable.MapBasedGraph<V, E> implements Graph<V, E> {
+public class SparseGraph<V extends Vertex, E extends Edge<V>> extends
+    org.psgraph.graph.immutable.SparseGraph<V, E> implements Graph<V, E> {
 
-  public MapBasedGraph(Collection<E> edges) {
+  public SparseGraph() {
+    this(SparseRepresentation.Hash);
+  }
+
+  public SparseGraph(SparseRepresentation sparseRepresentation) {
+    super(new ArrayList<>());
+  }
+
+  public SparseGraph(Collection<E> edges) {
     super(edges);
   }
 
-  /**
-   * @inheritDoc
-   */
-  @Override
-  public void addVertex(V v) {
-    graph.putIfAbsent(v, new HashMap<>());
+  public SparseGraph(SparseRepresentation sparseRepresentation, Collection<E> edges) {
+    super(sparseRepresentation, edges);
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
+   */
+  @Override
+  public void addVertex(V v) {
+    graph.putIfAbsent(v, newMap());
+  }
+
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void removeVertex(V v) {
@@ -51,7 +76,7 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> extends
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public void addEdge(E edge) {
@@ -59,7 +84,7 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> extends
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public void removeEdge(E edge) {
@@ -73,7 +98,7 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> extends
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   @Override
   public void removeEdge(V from, V to) {
@@ -83,9 +108,6 @@ public class MapBasedGraph<V extends Vertex, E extends Edge<V>> extends
         E edge = map.get(to);
         map.remove(from);
         edges.remove(edge);
-        if (map.isEmpty()) {
-          graph.remove(from);
-        }
         if (edge.getEdgeType() == EdgeType.Undirected) {
           removeEdge(to, from);
         }

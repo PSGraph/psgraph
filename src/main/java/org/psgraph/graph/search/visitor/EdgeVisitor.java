@@ -9,13 +9,13 @@
  * </pre>
  */
 
-package org.psgraph.graph.search;
+package org.psgraph.graph.search.visitor;
 
 import org.psgraph.graph.Edge;
 import org.psgraph.graph.Vertex;
 
 /**
- * Interface created to allow code injection in search algorithms through lambda expressions.
+ * Allows code injection in search algorithms through lambda expressions.
  *
  * @author Wilson de Carvalho
  */

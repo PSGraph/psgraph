@@ -11,7 +11,6 @@
 
 package org.psgraph.graph.search;
 
-import java.util.HashSet;
 import java.util.Set;
 import org.psgraph.graph.Vertex;
 
@@ -20,64 +19,36 @@ import org.psgraph.graph.Vertex;
  *
  * @author Wilson de Carvalho
  */
-public class SearchData<V extends Vertex> {
+public interface SearchData<V extends Vertex> {
 
-  private V vertex = null;
-  private VertexColor color = VertexColor.White;
-  private int time = 0;
-  private int depth = 0;
-  private V predecessor = null;
-  private Set<V> sucessors = new HashSet<>();
+  /**
+   * Gets the current vertex.
+   */
+  V getVertex();
 
-  public SearchData(V vertex) {
-    this.vertex = vertex;
-  }
+  /**
+   * Gets the color of the current vertex in the search.
+   */
+  VertexColor getColor();
 
-  public V getVertex() {
-    return vertex;
-  }
+  /**
+   * Gets the time (starting in 0) that measures how many vertices have been visited until this
+   * vertex was reached.
+   */
+  int getTime();
 
-  public void setVertex(V vertex) {
-    this.vertex = vertex;
-  }
+  /**
+   * Gets the depth of the current vertex in the search.
+   */
+  int getDepth();
 
-  public VertexColor getColor() {
-    return color;
-  }
+  /**
+   * Gets the predecessor of the current vertex in this search.
+   */
+  V getPredecessor();
 
-  public void setColor(VertexColor color) {
-    this.color = color;
-  }
-
-  public int getTime() {
-    return time;
-  }
-
-  public void setTime(int time) {
-    this.time = time;
-  }
-
-  public int getDepth() {
-    return depth;
-  }
-
-  public void setDepth(int depth) {
-    this.depth = depth;
-  }
-
-  public V getPredecessor() {
-    return predecessor;
-  }
-
-  public void setPredecessor(V predecessor) {
-    this.predecessor = predecessor;
-  }
-
-  public Set<V> getSucessors() {
-    return sucessors;
-  }
-
-  public void addSucessors(V sucessor) {
-    this.sucessors.add(sucessor);
-  }
+  /**
+   * Gets the successors (vertices that will be reached next) of the current vertex in this search.
+   */
+  Set<V> getSucessors();
 }
