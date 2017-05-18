@@ -9,7 +9,7 @@
  * </pre>
  */
 
-package org.psgraph.graph.immutable;
+package org.psgraph.graph.mutable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.psgraph.graph.AnalyticalGraph;
-import org.psgraph.graph.Edge;
 import org.psgraph.graph.EdgeType;
 import org.psgraph.graph.SparseRepresentation;
 import org.psgraph.graph.Vertex;
@@ -28,8 +27,8 @@ import org.psgraph.graph.Vertex;
  * it presents a higher memory cost which is typically 2 times of the underlying data structure
  * compared to its super class.
  *
- * This immutable graph does not allow inclusion or removal of new vertices or edges after the
- * instantiation of the class. Thus, it may be used safely by multiple threads.
+ * This mutable graph can may have vertices and edges removed or inserted after the class is
+ * instantiated. It is not thread safe.
  *
  * @author Wilson de Carvalho
  * @see org.psgraph.graph.immutable.SparseGraph
@@ -52,7 +51,7 @@ public class SparseAnalyticalGraph<V extends Vertex, E extends Edge<V>> extends 
    * {@inheritDoc}
    */
   @Override
-  protected void addEdge(E edge) {
+  public void addEdge(E edge) {
     super.addEdge(edge);
     V source = edge.getSource();
     V target = edge.getTarget();

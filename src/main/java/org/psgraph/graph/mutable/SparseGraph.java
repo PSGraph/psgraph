@@ -13,7 +13,6 @@ package org.psgraph.graph.mutable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import org.psgraph.graph.EdgeType;
 import org.psgraph.graph.SparseRepresentation;

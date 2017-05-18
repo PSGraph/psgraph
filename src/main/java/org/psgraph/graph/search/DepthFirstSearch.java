@@ -11,8 +11,6 @@
 
 package org.psgraph.graph.search;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,84 +21,26 @@ import org.psgraph.graph.search.visitor.EdgeVisitor;
 import org.psgraph.graph.search.visitor.SearchDataVisitor;
 import org.psgraph.graph.search.visitor.VertexVisitor;
 import org.psgraph.graph.search.visitor.Visitor;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Depth First Search (DFS) algorithm. <b>Cost: Theta(V+E)</b>
  *
  * @author Wilson de Carvalho
  */
-public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements GraphSearch<V, E> {
-
-  private final Graph<V, E> graph;
+public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> extends GraphSearchImpl<V, E> {
 
   public DepthFirstSearch(Graph<V, E> graph) {
-    this.graph = graph;
+    super(graph);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public Map<V, SearchData<V>> search() {
-    return search((VertexVisitor<V>) v -> true);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Map<V, SearchData<V>> search(VertexVisitor<V> visitor) {
-    Map<V, SearchData<V>> searchData = initSearchData();
-    for (V v : graph.getVertices()) {
-      if (searchData.get(v).getColor() == VertexColor.White) {
-        dfsVertex(v, u -> true, searchData);
-      }
-    }
-    return searchData;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Collection<E> search(EdgeVisitor<V, E> visitor) {
-    Set<E> ret = new HashSet<>();
-    Map<V, SearchData<V>> searchData = initSearchData();
-    for (V v : graph.getVertices()) {
-      if (searchData.get(v).getColor() == VertexColor.White) {
-        ret.addAll(dfsEdge(v, u -> true, searchData));
-      }
-    }
-    return ret;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Map<V, SearchData<V>> search(V s) {
-    Map<V, SearchData<V>> searchData = initSearchData();
-    return dfsVertex(s, v -> true, searchData);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Map<V, SearchData<V>> search(V s, VertexVisitor<V> visitor) {
-    Map<V, SearchData<V>> searchData = initSearchData();
-    return dfsVertex(s, visitor, searchData);
-  }
-
-  /**
-   * Executes the dfs algorithm for a given start vertex <b>s</b>. <b>Cost: Theta(V+E)</b>
-   */
-  private Map<V, SearchData<V>> dfsVertex(V s, VertexVisitor<V> visitor,
+  protected <T> void vertexSearch(V s, Visitor<T> visitor,
       Map<V, SearchData<V>> searchData) {
     int time = 0;
     dfsVisit(s, searchData, time, visitor);
-    return searchData;
   }
 
   /**
@@ -132,40 +72,10 @@ public class DepthFirstSearch<V extends Vertex, E extends Edge<V>> implements Gr
   }
 
   /**
-   * Initializes a map with all vertices to store the search data.
-   */
-  private Map<V, SearchData<V>> initSearchData() {
-    Map<V, SearchData<V>> ret = new HashMap<>();
-    for (V vertex : graph.getVertices()) {
-      ret.put(vertex, new SearchDataImpl<>(vertex));
-    }
-    return ret;
-  }
-
-  /**
    * {@inheritDoc}
    */
   @Override
-  public Set<E> search(V s, EdgeVisitor<V, E> visitor) {
-    throw new NotImplementedException();
-  }
-
-  @Override
-  public Map<V, SearchData<V>> search(SearchDataVisitor<V> visitor) {
-    return null;
-  }
-
-  @Override
-  public Map<V, SearchData<V>> search(V s, SearchDataVisitor<V> visitor) {
-    return null;
-  }
-
-
-  /**
-   * Executes the dfs algorithm for a given start vertex <b>s</b>. <b>Cost: Theta(V+E)</b>
-   */
-  private Set<E> dfsEdge(V s, EdgeVisitor<V, E> visitor,
-      Map<V, SearchData<V>> searchData) {
+  protected Set<E> edgeSearch(V s, EdgeVisitor<V, E> visitor, Map<V, SearchData<V>> searchData) {
     Set<E> ret = new HashSet<>();
     int time = 0;
     dfsEdgeVisit(s, searchData, time, visitor, ret);
